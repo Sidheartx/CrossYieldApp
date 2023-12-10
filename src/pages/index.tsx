@@ -10,7 +10,8 @@ import ReadERC20 from "components/ReadERC20"
 import TransferERC20 from "components/TransferERC20"
 
 declare let window:any
-const addressERC20 = '0x5FbDB2315678afecb367f032d93F642f64180aa3'
+const addressERC20 = '0xD21341536c5cF5EB1bcb58f6723cE26e8D8E90e4'
+const addressVault = '0xCedFA25D0c400ceA870206605C35625e17c76056'
 
 const Home: NextPage = () => {
   const [balance, setBalance] = useState<string | undefined>()
@@ -79,7 +80,7 @@ const Home: NextPage = () => {
         <title>My DAPP</title>
       </Head>
 
-      <Heading as="h3"  my={4}>Explore Web3</Heading>          
+      <Heading as="h3"  my={4}>Deposit here</Heading>          
       <VStack>
         <Box w='100%' my={4}>
         {currentAccount  
@@ -93,7 +94,7 @@ const Home: NextPage = () => {
         </Box>
         {currentAccount  
           ?<Box  mb={0} p={4} w='100%' borderWidth="1px" borderRadius="lg">
-          <Heading my={4}  fontSize='xl'>Account info</Heading>
+          <Heading my={4}  fontSize='xl'>Your Account info</Heading>
           <Text>ETH Balance of current account: {balance}</Text>
           <Text>Chain Info: ChainId {chainId} name {chainname}</Text>
         </Box>
@@ -101,17 +102,18 @@ const Home: NextPage = () => {
         }
 
         <Box  mb={0} p={4} w='100%' borderWidth="1px" borderRadius="lg">
-          <Heading my={4}  fontSize='xl'>Read ClassToken Info</Heading>
+          <Heading my={4}  fontSize='xl'>Reading BnM Token Info</Heading>
           <ReadERC20 
             addressContract={addressERC20}
             currentAccount={currentAccount}
+            vaultAddress={addressVault}
           />
         </Box>
 
         <Box  mb={0} p={4} w='100%' borderWidth="1px" borderRadius="lg">
-          <Heading my={4}  fontSize='xl'>Transfer Classtoken</Heading>
+          <Heading my={4}  fontSize='xl'>Deposit to Fuji Vault to get Access to Yield on Sepolia</Heading>
           <TransferERC20 
-            addressContract={addressERC20}
+            addressContract={addressVault}
             currentAccount={currentAccount}
           />
         </Box>

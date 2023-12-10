@@ -4,10 +4,17 @@ import {Text} from '@chakra-ui/react'
 import {ERC20ABI as abi} from 'abi/ERC20ABI'
 import {ethers} from 'ethers'
 import { Contract } from "ethers"
+import {SourceVaultABI as sourceabi} from 'abi/SourceVaultABI' 
+import { Address } from 'cluster'
+import {parseEther } from 'ethers/lib/utils'
+import { TransactionResponse,TransactionReceipt } from "@ethersproject/abstract-provider"
+import {Button, Input , NumberInput,  NumberInputField,  FormControl,  FormLabel } from '@chakra-ui/react'
+
 
 interface Props {
     addressContract: string,
     currentAccount: string | undefined
+    vaultAddress: string
 }
 
 declare let window: any
@@ -18,12 +25,15 @@ export default function ReadERC20(props:Props){
   const [totalSupply,setTotalSupply]=useState<string>()
   const [symbol,setSymbol]= useState<string>("")
   const [balance, SetBalance] =useState<number|undefined>(undefined)
+  const vaultAddress = props.vaultAddress 
+  const defaultamount = '100'; 
 
   useEffect( () => {
     if(!window.ethereum) return
 
     const provider = new ethers.providers.Web3Provider(window.ethereum)
     const erc20:Contract = new ethers.Contract(addressContract, abi, provider);
+    const sourceVault:Contract = new ethers.Contract(addressContract, sourceabi, provider);
 
     provider.getCode(addressContract).then((result:string)=>{
       //check whether it is a contract
@@ -83,11 +93,32 @@ export default function ReadERC20(props:Props){
     }).catch((e:Error)=>console.log(e))
   }
 
+  async function approve(event:React.FormEvent) {
+    event.preventDefault()
+    if(!window.ethereum) return    
+    const provider = new ethers.providers.Web3Provider(window.ethereum)
+    const signer = provider.getSigner()
+    const erc20:Contract = new ethers.Contract(addressContract, abi, signer)
+    
+    erc20.approve(vaultAddress,parseEther(defaultamount))
+      .then((tr: TransactionResponse) => {
+        console.log(`TransactionResponse TX hash: ${tr.hash}`)
+        tr.wait().then((receipt:TransactionReceipt)=>{console.log("transfer receipt",receipt)})
+      })
+      .catch((e:Error)=>console.log(e))
+
+  }
+
   return (
     <div>
-        <Text><b>ERC20 Contract</b>: {addressContract}</Text>
-        <Text><b>ClassToken totalSupply</b>:{totalSupply} {symbol}</Text>
-        <Text my={4}><b>ClassToken in current account</b>: {balance} {symbol}</Text>
+        <Text><b>BnM Contract</b>: {addressContract}</Text>
+        <Text><b>BnM Token Supply</b>:{totalSupply} {symbol}</Text>
+        <Text my={4}><b>BnM Token in current account</b>: {balance} {symbol}</Text>
+        <form onSubmit={approve}>
+        <Text>Please approve before Depositing</Text>
+        <Button type="submit" isDisabled={!currentAccount}>Approve</Button>
+        </form>
     </div>
+    
   )
 }

@@ -15,7 +15,7 @@ export function Layout(props: Props) {
         {props.children}
       </Container>
       <Center as="footer" bg={useColorModeValue('gray.100', 'gray.700')} p={6}>
-          <Text fontSize="md">first dapp by W3BCD - 2022</Text>
+          <Text fontSize="md">Submitted for ChainLink Constellation Hackathon 2023 by @0xCSMNT, @sidheartx</Text>
       </Center>
     </div>
   )
